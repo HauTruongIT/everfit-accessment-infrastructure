@@ -1,0 +1,28 @@
+name: Deploy to sit
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'sit/demo-app.yaml'
+
+jobs:
+  deploy-sit:
+    name: Deploy demo-app to sit namespace
+    runs-on:
+      - self-hosted
+      - everfit
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        run: |
+          aws eks update-kubeconfig --region ${{ secrets.EKS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Helm upgrade demo-app (sit)
+        run: |
+          helm upgrade demo-app ./charts \
+            --namespace sit \
+            --values ./sit/demo-app.yaml \
+            --install

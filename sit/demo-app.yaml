@@ -1,0 +1,126 @@
+# Default values for saas-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: 028780196859.dkr.ecr.ap-southeast-1.amazonaws.com/everfit/demo-app
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+containerSpec:
+  {}
+  # command: ["java"]
+  # args: ["-jar", "/app/application.jar"]
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  {}
+
+securityContext:
+  {}
+
+# podSecurityContext:
+#   runAsGroup: 65534
+#   runAsUser: 65534
+
+# securityContext:
+#   capabilities:
+#     drop:
+#       - ALL
+#   readOnlyRootFilesystem: false
+#   runAsNonRoot: true
+#   runAsUser: 65534
+#   allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress: {}
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 256Mi
+
+env:
+  - name: KEY
+    value: VALUE
+
+startupProbe: {}
+  # httpGet:
+  #   path: /actuator2/health
+  #   port: http
+  # initialDelaySeconds: 5
+  # periodSeconds: 5
+  # timeoutSeconds: 3
+  # successThreshold: 1
+  # failureThreshold: 120
+readinessProbe: {}
+  # httpGet:
+  #   path: /actuator2/health
+  #   port: http
+  # initialDelaySeconds: 5
+  # periodSeconds: 10
+  # timeoutSeconds: 3
+  # successThreshold: 1
+  # failureThreshold: 3
+livenessProbe: {}
+  # httpGet:
+  #   path: /actuator2/health
+  #   port: http
+  # initialDelaySeconds: 5
+  # periodSeconds: 10
+  # timeoutSeconds: 3
+  # successThreshold: 1
+  # failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+secretNames:
+  []
+  # - saas-app-secret
+
+# Additional volumes on the output Deployment definition.
+volumes: {}
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: {}
+
+nodeSelector: {}
+
+tolerations: []
+  # - key: "app-plane"
+  #   operator: "Equal"
+  #   value: "true"
+  #   effect: "NoSchedule"
+
+affinity: {}

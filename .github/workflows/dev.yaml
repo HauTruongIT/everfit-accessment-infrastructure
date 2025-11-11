@@ -1,0 +1,28 @@
+name: Deploy to dev
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'dev/demo-app.yaml'
+
+jobs:
+  deploy-dev:
+    name: Deploy demo-app to dev namespace
+    runs-on:
+      - self-hosted
+      - everfit
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        run: |
+          aws eks update-kubeconfig --region ${{ secrets.EKS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Helm upgrade demo-app (dev)
+        run: |
+          helm upgrade demo-app ./charts \
+            --namespace dev \
+            --values ./dev/demo-app.yaml \
+            --install
