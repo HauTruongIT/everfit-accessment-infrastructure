@@ -19,20 +19,32 @@ This repository is the centralized deployment manager for all Everfit microservi
 3. **Centralized Control**
    - All deployments are managed here, ensuring consistency and observability.
 
-### Example Directory Structure
+
+## Directory Structure
+
 
 ```
-charts/
-  demo-app/
-values/
-  dev/
-    demo-app.yaml
-  sit/
-    demo-app.yaml
-.github/
-  workflows/
-    dev.yaml
-    sit.yaml
+everfit-assessment-infrastructure/
+├── charts/                      # Helm charts for microservices
+│   ├── Chart.yaml               # Chart metadata for demo-app
+│   ├── templates/               # Helm templates
+│   └── values.yaml              # Default values for demo-app
+├── dev/                         # Development environment values
+│   └── demo-app.yaml            # Helm values for demo-app in dev
+├── sit/                         # SIT environment values
+│   └── demo-app.yaml            # Helm values for demo-app in SIT
+├── global/                      # Global Terraform/IaC configs
+│   └── github-runners/          # Terraform for GitHub runners
+│       ├── backend.tf
+│       ├── locals.tf
+│       ├── main.tf
+│       ├── providers.tf
+│       └── .terraform.lock.hcl
+├── .github/
+│   └── workflows/               # GitHub Actions workflows
+│       ├── dev.yaml             # Dev deployment workflow
+│       └── sit.yaml             # SIT deployment workflow
+└── README.md                    # Project documentation
 ```
 
 ### Environment & Access
