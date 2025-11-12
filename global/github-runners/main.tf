@@ -1,8 +1,8 @@
 ################################################################################
-# IAM Github Actions EC2 Roles
+# IAM GitHub Actions EC2 Roles
 ################################################################################
 resource "aws_iam_role" "github_actions_ec2_role" {
-  name = "github-actions-ec2-role"
+  name = var.github_actions_ec2_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -40,7 +40,7 @@ resource "aws_iam_role_policy" "github_actions_ec2_policy" {
 # IAM Terraform Roles
 ################################################################################
 resource "aws_iam_role" "terraform_ec2_role" {
-  name = "terraform-ec2-role"
+  name = var.terraform_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -67,41 +67,42 @@ resource "aws_iam_role_policy_attachment" "terraform_policy_attach" {
 }
 
 ################################################################################
-# Github Actions Instance
+# GitHub Actions Instance
 ################################################################################
-data "aws_subnet" "public_subnet_a" {
-  vpc_id            = local.vpc_id
-  availability_zone = "ap-southeast-1a"
-  filter {
-    name   = "tag:Type"
-    values = ["Public"]
-  }
-}
-
 resource "aws_iam_instance_profile" "github_actions_instance_profile" {
   name = "github-actions-instance-profile"
   role = aws_iam_role.github_actions_ec2_role.name
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "github-actions-instance-profile"
+    }
+  )
 }
 
 resource "aws_instance" "github_actions_instance" {
-  ami                         = "ami-0e5f0fea071999cbd"
-  instance_type               = "t2.micro"
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
   subnet_id                   = data.aws_subnet.public_subnet_a.id
   associate_public_ip_address = true
-  key_name                    = "dev-viego-ec2-keypair"
-  vpc_security_group_ids      = [local.viego_whitelisted_sg_id]
+  key_name                    = var.ec2_key_pair_name
+  vpc_security_group_ids      = [var.security_group_id]
   iam_instance_profile        = aws_iam_instance_profile.github_actions_instance_profile.name
 
-  tags = {
-    Name = "viego-github-actions"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = var.instance_name
+    }
+  )
 }
 
 ################################################################################
 # IAM Role to connect OIDC to Github Actions
 ################################################################################
 resource "aws_iam_role" "github_actions_oidc_role" {
-  name = "github-actions-oidc-role"
+  name = var.github_actions_oidc_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
