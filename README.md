@@ -22,29 +22,43 @@ This repository is the centralized deployment manager for all Everfit microservi
 
 ## Directory Structure
 
-
 ```
 everfit-assessment-infrastructure/
+├── modules/                     # Reusable Terraform modules
+│   └── github-runners/          # GitHub Actions runner module
+│       ├── main.tf              # IAM roles and EC2 instance definitions
+│       ├── variables.tf         # Module variables with defaults
+│       ├── outputs.tf           # Module outputs
+│       ├── data.tf              # Data sources (AWS account ID, subnet lookup)
+│       └── README.md            # Module documentation
+├── global/                      # Global Terraform/IaC configs
+│   └── github-runners/          # GitHub Actions runner configuration
+│       ├── main.tf              # Module consumer (calls the module)
+│       ├── variables.tf         # Input variables for the module
+│       ├── outputs.tf           # Exposed module outputs
+│       ├── terraform.tfvars     # Variable values (update with your values)
+│       ├── backend.tf           # Terraform backend configuration
+│       ├── locals.tf            # Local values
+│       ├── providers.tf         # AWS provider configuration
+│       └── .terraform.lock.hcl  # Terraform lock file
 ├── charts/                      # Helm charts for microservices
 │   ├── Chart.yaml               # Chart metadata for demo-app
-│   ├── templates/               # Helm templates
-│   └── values.yaml              # Default values for demo-app
+│   ├── values.yaml              # Default Helm values
+│   └── templates/               # Helm templates
+│       ├── deployment.yaml      # Kubernetes Deployment template
+│       ├── service.yaml         # Kubernetes Service template
+│       └── _helpers.tpl         # Helm helper templates
 ├── dev/                         # Development environment values
-│   └── demo-app.yaml            # Helm values for demo-app in dev
+│   └── demo-app.yaml            # Helm values override for demo-app in dev
 ├── sit/                         # SIT environment values
-│   └── demo-app.yaml            # Helm values for demo-app in SIT
-├── global/                      # Global Terraform/IaC configs
-│   └── github-runners/          # Terraform for GitHub runners
-│       ├── backend.tf
-│       ├── locals.tf
-│       ├── main.tf
-│       ├── providers.tf
-│       └── .terraform.lock.hcl
-├── .github/
+│   └── demo-app.yaml            # Helm values override for demo-app in SIT
+├── .github/                     # GitHub configuration
 │   └── workflows/               # GitHub Actions workflows
-│       ├── dev.yaml             # Dev deployment workflow
-│       └── sit.yaml             # SIT deployment workflow
-└── README.md                    # Project documentation
+│       ├── dev.yaml             # Dev deployment workflow (triggered on dev/demo-app.yaml changes)
+│       └── sit.yaml             # SIT deployment workflow (triggered on sit/demo-app.yaml changes)
+├── .gitignore                   # Git ignore rules
+├── README.md                    # Project documentation
+└── .terraform/                  # Terraform state and plugins (git-ignored)
 ```
 
 ### Environment & Access
